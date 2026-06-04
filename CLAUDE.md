@@ -49,6 +49,23 @@ pip install opencv-python mss pyautogui pynput keyboard python-telegram-bot nump
 
 ---
 
+## 실행 환경
+
+- 반드시 가상환경(venv) 안에서 실행
+- 가상환경 생성: `python -m venv venv`
+- 가상환경 활성화: `venv\Scripts\activate` (Windows)
+- 패키지 설치: `pip install -r requirements.txt`
+- 새 패키지 추가 시 항상 `pip freeze > requirements.txt` 업데이트
+
+## 프로젝트 시작 전 체크리스트 (Claude Code)
+
+1. venv 가상환경 활성화 확인
+2. pip install -r requirements.txt 로 패키지 설치 확인
+3. CLAUDE.md 읽고 현재 PHASE 확인
+4. 작업 완료 후 git add, commit, push
+
+---
+
 ## 프로젝트 구조
 
 ```
@@ -288,11 +305,11 @@ def create_hunter():
 ### PHASE 1 — 뼈대
 > 목표: 프로그램이 켜지고 꺼지는 것 확인
 
-- [ ] `config.py` — 키 바인딩, 딜레이 상수 정의
-- [ ] `main.py` — F9 시작/중지, F10 종료 핫키 등록
-- [ ] `input_controller.py` — 랜덤 딜레이 키 입력 함수
-- [ ] `screen_capture.py` — mss 전체화면 캡처 확인
-- [ ] 실행 테스트 — F9/F10 핫키 동작 확인
+- [x] `config.py` — 키 바인딩, 딜레이 상수 정의
+- [x] `main.py` — F9 시작/중지, F10 종료 핫키 등록
+- [x] `input_controller.py` — 랜덤 딜레이 키 입력 함수
+- [x] `screen_capture.py` — mss 전체화면 캡처 확인
+- [x] 실행 테스트 — F9/F10 핫키 동작 확인
 
 **완료 기준**: F9/F10 핫키 정상 동작, 화면 캡처 이미지 저장됨
 
@@ -577,7 +594,7 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 
 ## 현재 구현 상태
 
-- [ ] PHASE 1  — 뼈대
+- [x] PHASE 1  — 뼈대
 - [ ] PHASE 2  — 라이선스 시스템
 - [ ] PHASE 3  — HP/MP 포션
 - [ ] PHASE 4  — 스킬 콤보

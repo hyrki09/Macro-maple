@@ -1,0 +1,40 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ===== 가상환경 =====
+.venv/
+venv/
+env/
+ENV/
+
+# ===== 라이선스 / 민감 정보 =====
+# license.dat : 로컬 라이선스 토큰 (하드웨어 ID 바인딩)
+# config.json : 사용자 설정 (텔레그램 토큰, 채팅ID 포함)
+license.dat
+config.json
+*.key
+*.secret
+
+# ===== 캡처 / 디버그 산출물 =====
+captures/
+*.log
+debug_*.png
+
+# ===== YOLO 학습 산출물 =====
+runs/
+*.pt.tmp
+
+# ===== IDE / OS =====
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

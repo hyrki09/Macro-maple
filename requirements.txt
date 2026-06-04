@@ -1,0 +1,10 @@
+opencv-python
+mss
+pyautogui
+pynput
+keyboard
+python-telegram-bot
+numpy
+Pillow
+ultralytics
+requests
