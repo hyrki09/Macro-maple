@@ -318,12 +318,12 @@ def create_hunter():
 ### PHASE 2 — 라이선스 시스템
 > 목표: 실행 시 라이선스 검증 후 등급에 따라 기능 제한
 
-- [ ] `license/hardware_id.py` — 하드웨어 ID 생성
-- [ ] `license/local_validator.py` — 로컬 license.dat 파일 검증
-- [ ] `license/online_validator.py` — 온라인 서버 검증 (stub으로 먼저 구현)
-- [ ] `license/license_manager.py` — 등급 확인 + `@require_tier` 데코레이터
-- [ ] `main.py` — 시작 시 라이선스 검증 연결
-- [ ] 실행 테스트 — FREE/BASIC/PREMIUM 각 등급으로 기능 제한 확인
+- [x] `license/hardware_id.py` — 하드웨어 ID 생성
+- [x] `license/local_validator.py` — 로컬 license.dat 파일 검증
+- [x] `license/online_validator.py` — 온라인 서버 검증 (stub으로 먼저 구현)
+- [x] `license/license_manager.py` — 등급 확인 + `@require_tier` 데코레이터
+- [x] `main.py` — 시작 시 라이선스 검증 연결
+- [x] 실행 테스트 — FREE/BASIC/PREMIUM 각 등급으로 기능 제한 확인 (test_phase2.py, 21/21 통과)
 
 **완료 기준**: 등급별로 허용/차단 기능이 정확히 분리됨
 
@@ -595,7 +595,7 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 ## 현재 구현 상태
 
 - [x] PHASE 1  — 뼈대
-- [ ] PHASE 2  — 라이선스 시스템
+- [x] PHASE 2  — 라이선스 시스템
 - [ ] PHASE 3  — HP/MP 포션
 - [ ] PHASE 4  — 스킬 콤보
 - [ ] PHASE 5  — 미니맵 좌표

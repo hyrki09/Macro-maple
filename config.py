@@ -63,3 +63,20 @@ LOG_FORMAT = '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
 # ===== 경로 =====
 CONFIG_JSON_PATH = 'config.json'   # 사용자 설정 저장 파일
 CAPTURE_DIR      = 'captures'      # 디버그 캡처 저장 폴더
+
+# ===== 라이선스 시스템 (PHASE 2) =====
+LICENSE_FILE_PATH = 'license.dat'   # 로컬 라이선스 토큰 저장 파일 (하드웨어ID 바인딩)
+
+# 온라인 인증 서버 — PHASE 2 에서는 stub 으로 대체, 나중에 실제 서버 연결
+LICENSE_SERVER_URL = 'https://example.com/api/license/verify'
+LICENSE_SERVER_TIMEOUT = 5.0   # 온라인 검증 요청 타임아웃(초)
+
+# 토큰 서명용 비밀키 — 실제 배포 시 서버만 알고 있어야 한다 (지금은 개발용 더미)
+# 로컬 토큰 위변조 방지를 위한 HMAC-SHA256 서명에 사용한다.
+LICENSE_SIGNING_SECRET = 'maple-macro-dev-secret-change-me'
+
+# 개발용 강제 등급 — None 이면 실제 라이선스(license.dat) 검증 수행.
+# 값('FREE'/'BASIC'/'PREMIUM')을 지정하면 검증을 건너뛰고 그 등급으로 강제한다.
+# PHASE 2 개발 중에는 'PREMIUM' 으로 두어 전체 기능을 테스트하고,
+# 실제 배포 시 반드시 None 으로 바꿔야 한다.
+LICENSE_DEV_FORCE_TIER = 'PREMIUM'

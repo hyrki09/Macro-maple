@@ -15,6 +15,7 @@ import time
 
 import config
 import screen_capture
+from license.license_manager import license_manager
 
 try:
     import keyboard
@@ -119,10 +120,37 @@ def setup_logging() -> None:
     )
 
 
+def verify_license() -> str:
+    """시작 시 라이선스를 검증하고 현재 등급을 반환한다.
+
+    로컬 토큰(license.dat) 또는 개발용 강제 등급으로 등급을 확정한다.
+    FREE 등급이어도 기본 기능은 동작하므로 프로그램을 막지는 않고,
+    등급만 확인해 로그로 안내한다. PREMIUM 전용 기능은 호출 시점에
+    @require_tier 데코레이터가 개별적으로 차단한다.
+
+    Returns:
+        확정된 현재 등급 문자열 (FREE / BASIC / PREMIUM).
+    """
+    try:
+        tier = license_manager.refresh()
+        logger.info(f"라이선스 검증 완료 — 현재 등급: {tier}")
+        if tier == 'FREE':
+            logger.info(
+                "FREE 등급으로 실행됩니다. "
+                "BASIC/PREMIUM 기능은 라이선스 키 활성화가 필요합니다."
+            )
+        return tier
+    except Exception as e:
+        logger.error(f"라이선스 검증 중 오류 — FREE 로 진행: {e}")
+        return 'FREE'
+
+
 def main() -> None:
-    """프로그램 진입점 — 로깅 설정, 핫키 등록, 메인 루프 실행."""
+    """프로그램 진입점 — 로깅 설정, 라이선스 검증, 핫키 등록, 메인 루프 실행."""
     setup_logging()
     logger.info("===== 메이플 자동사냥 매크로 시작 =====")
+
+    verify_license()
 
     app = MacroApp()
     if not app.register_hotkeys():
