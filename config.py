@@ -23,7 +23,8 @@ HP_POTION_KEY      = '1'
 MP_POTION_KEY      = '2'
 HP_THRESHOLD_PCT   = 50     # HP 50% 이하 시 포션
 MP_THRESHOLD_PCT   = 30     # MP 30% 이하 시 포션
-HP_POTION_COOLDOWN = 1.5    # 포션 쿨타임(초)
+HP_POTION_COOLDOWN = 1.5    # HP 포션 쿨타임(초) — 연타 방지
+MP_POTION_COOLDOWN = 1.5    # MP 포션 쿨타임(초) — 연타 방지
 
 # ===== 화면 설정 (1920x1080 기준) =====
 # 다른 해상도면 아래 REGION 값을 직접 보정해야 한다.
@@ -38,8 +39,28 @@ FULL_SCREEN_REGION = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 FLOOR2_Y_THRESHOLD = 40
 
 # ===== HP/MP 바 색상 (HSV) — 실제 게임 캡처 후 보정 필요 =====
-HP_COLOR_LOWER = np.array([0, 100, 100])
-HP_COLOR_UPPER = np.array([10, 255, 255])
+# HP 바는 빨강 계열. 빨강은 HSV 색상환의 0°/180° 양끝에 걸쳐 있어
+# 범위를 두 개로 나눠야 정확히 잡힌다. (낮은 쪽 + 높은 쪽)
+HP_COLOR_LOWER  = np.array([0, 100, 100])
+HP_COLOR_UPPER  = np.array([10, 255, 255])
+HP_COLOR_LOWER2 = np.array([160, 100, 100])
+HP_COLOR_UPPER2 = np.array([180, 255, 255])
+# get_bar_ratio 에 넘기는 (lower, upper) 범위 목록
+HP_COLOR_RANGES = [
+    (HP_COLOR_LOWER, HP_COLOR_UPPER),
+    (HP_COLOR_LOWER2, HP_COLOR_UPPER2),
+]
+
+# MP 바는 파랑 계열 — 단일 범위로 충분
+MP_COLOR_LOWER = np.array([100, 120, 100])
+MP_COLOR_UPPER = np.array([130, 255, 255])
+MP_COLOR_RANGES = [
+    (MP_COLOR_LOWER, MP_COLOR_UPPER),
+]
+
+# 바 채움 비율 판정 기준 — 한 세로줄(column)에서 색 픽셀이
+# 이 비율(0~1) 이상이면 그 줄은 '채워짐'으로 본다. (노이즈 한 줄 무시)
+BAR_COLUMN_FILL_RATIO = 0.30
 
 # ===== 스킬 콤보 [(키, 딜레이(초)), ...] =====
 SKILL_COMBO_MODE1 = [('z', 0.3), ('x', 0.3), ('c', 0.8), ('v', 0.3)]   # 고스펙 [PREMIUM]

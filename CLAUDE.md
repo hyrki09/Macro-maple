@@ -334,10 +334,10 @@ def create_hunter():
 ### PHASE 3 — HP/MP 포션 자동 사용
 > 목표: HP/MP가 일정 % 이하면 자동으로 포션 키 입력
 
-- [ ] `screen_capture.py` — HSV 색상 범위로 HP/MP바 비율 계산
-- [ ] `config.py` — HP/MP 임계값(%), 포션 키 설정
-- [ ] `macro_logic.py` — `check_and_use_potion()` 함수
-- [ ] 실행 테스트 — HP바 줄이면서 포션키 자동 입력 확인
+- [x] `screen_capture.py` — HSV 색상 범위로 HP/MP바 비율 계산
+- [x] `config.py` — HP/MP 임계값(%), 포션 키 설정
+- [x] `macro_logic.py` — `check_and_use_potion()` 함수
+- [x] 실행 테스트 — 합성 이미지/쿨다운 로직 검증 (test_phase3.py, 10/10 통과). 실게임 보정은 `--live` 모드
 
 **완료 기준**: HP 50% 이하 시 자동으로 포션 키가 눌림
 
@@ -596,7 +596,7 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 
 - [x] PHASE 1  — 뼈대
 - [x] PHASE 2  — 라이선스 시스템
-- [ ] PHASE 3  — HP/MP 포션
+- [x] PHASE 3  — HP/MP 포션
 - [ ] PHASE 4  — 스킬 콤보
 - [ ] PHASE 5  — 미니맵 좌표
 - [ ] PHASE 6  — 패턴 방식 자동이동

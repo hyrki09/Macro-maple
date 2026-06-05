@@ -14,6 +14,7 @@ import threading
 import time
 
 import config
+import macro_logic
 import screen_capture
 from license.license_manager import license_manager
 
@@ -101,13 +102,14 @@ class MacroApp:
             logger.info("메인 루프 종료")
 
     def _tick(self) -> None:
-        """메인 루프 1회전 동작. PHASE 1 은 자리만 차지하는 stub.
+        """메인 루프 1회전 동작.
 
-        이후 PHASE 에서 포션 체크 / 사냥 루프 / 상태 감시를 여기에 연결한다.
+        PHASE 3: 매 틱마다 HP/MP 를 확인해 임계값 이하면 포션을 사용한다.
+        이후 PHASE 에서 사냥 루프 / 상태 감시를 여기에 추가로 연결한다.
         """
         try:
-            # TODO(PHASE 3+): check_and_use_potion(), hunter.run_loop() 등 연결
-            pass
+            macro_logic.check_and_use_potion()
+            # TODO(PHASE 6+): hunter.run_loop(), monitor 등 연결
         except Exception as e:
             logger.error(f"_tick 처리 실패: {e}")
 
