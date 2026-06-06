@@ -352,10 +352,10 @@ HP_COLOR_UPPER = np.array([10, 255, 255])
 ### PHASE 4 — 스킬 콤보 자동화
 > 목표: 설정한 순서대로 스킬 키를 자동 입력
 
-- [ ] `config.py` — 모드1(고스펙)/모드2(저스펙) 스킬 콤보 설정
-- [ ] `macro_logic.py` — `execute_skill_combo()` 함수
-- [ ] 라이선스 체크 — 고스펙 모드는 PREMIUM만 가능
-- [ ] 실행 테스트 — 더미 창에서 스킬 키 순서 확인
+- [x] `config.py` — 모드1(고스펙)/모드2(저스펙) 스킬 콤보 설정 + 모드 식별자/지터 비율
+- [x] `macro_logic.py` — `SkillComboManager` + `execute_skill_combo()` 함수
+- [x] 라이선스 체크 — 고스펙 모드는 PREMIUM만 가능 (`@require_tier('PREMIUM')`)
+- [x] 실행 테스트 — 키 순서/지터/등급 차단 검증 (test_phase4.py, 12/12 통과)
 
 **완료 기준**: 등급에 맞는 스킬 콤보가 랜덤 딜레이로 입력됨
 
@@ -597,7 +597,7 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 - [x] PHASE 1  — 뼈대
 - [x] PHASE 2  — 라이선스 시스템
 - [x] PHASE 3  — HP/MP 포션
-- [ ] PHASE 4  — 스킬 콤보
+- [x] PHASE 4  — 스킬 콤보
 - [ ] PHASE 5  — 미니맵 좌표
 - [ ] PHASE 6  — 패턴 방식 자동이동
 - [ ] PHASE 7  — 상태 감시

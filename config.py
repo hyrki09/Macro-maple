@@ -63,8 +63,27 @@ MP_COLOR_RANGES = [
 BAR_COLUMN_FILL_RATIO = 0.30
 
 # ===== 스킬 콤보 [(키, 딜레이(초)), ...] =====
+# 각 튜플의 딜레이는 '기본값'이며, 실제 실행 시 SKILL_DELAY_JITTER 만큼
+# 랜덤 변동을 줘서 고정 패턴을 피한다. (코드 규칙 2: 고정 딜레이 금지)
 SKILL_COMBO_MODE1 = [('z', 0.3), ('x', 0.3), ('c', 0.8), ('v', 0.3)]   # 고스펙 [PREMIUM]
 SKILL_COMBO_MODE2 = [('z', 0.5), ('x', 0.5)]                            # 저스펙
+
+# 스킬 모드 식별자
+SKILL_MODE_HIGHSPEC = 'highspec'   # 고스펙 — PREMIUM 전용
+SKILL_MODE_LOWSPEC  = 'lowspec'    # 저스펙 — 전 등급 사용 가능
+
+# 모드 → 콤보 매핑 (코드 규칙 3: 매핑도 한곳에서 관리)
+SKILL_COMBOS = {
+    SKILL_MODE_HIGHSPEC: SKILL_COMBO_MODE1,
+    SKILL_MODE_LOWSPEC:  SKILL_COMBO_MODE2,
+}
+
+# 콤보 기본 딜레이에 적용할 랜덤 지터 비율 (±비율).
+# 예) 0.20 이면 기본 0.5초 딜레이가 0.4~0.6초 사이에서 랜덤으로 결정된다.
+SKILL_DELAY_JITTER = 0.20
+
+# 기본 스킬 모드 — config.json 미설정 시 사용 (저스펙: 전 등급 안전)
+SKILL_MODE_DEFAULT = SKILL_MODE_LOWSPEC
 
 # ===== 상점 주기 (초) =====
 SHOP_INTERVAL = 1800   # 30분
