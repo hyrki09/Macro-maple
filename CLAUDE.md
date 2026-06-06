@@ -376,14 +376,14 @@ HP_COLOR_UPPER = np.array([10, 255, 255])
 ### PHASE 6 — 패턴 방식 자동 이동 [FREE/BASIC/PREMIUM]
 > 목표: 1층/2층을 왔다갔다하며 좌우 이동 패턴 실행
 
-- [ ] `hunting/base_hunter.py` — 추상 클래스 정의
-- [ ] `hunting/pattern_hunter.py` — 타이머 기반 패턴 이동 구현
+- [x] `hunting/base_hunter.py` — 추상 클래스 정의 (find/decide/execute + step/run_loop)
+- [x] `hunting/pattern_hunter.py` — 타이머 기반 패턴 이동 구현
   - `move_left_right()` 좌우 이동
-  - `move_to_floor(floor)` 층 이동
+  - `move_to_floor(floor)` 층 이동 (미니맵 Y 로 도달 확인)
   - `floor_recovery()` 실패 재시도
-  - `run_loop()` 전체 사냥 루프
-- [ ] `main.py` — `PatternHunter` 연결
-- [ ] 실행 테스트 — 빨코2 맵에서 실제 이동 패턴 확인
+  - `run_loop()` 전체 사냥 루프 (BaseHunter 제공, step() 반복)
+- [x] `main.py` — `create_hunter()` + `PatternHunter` 연결 (_tick 에서 step())
+- [x] 실행 테스트 — 헤드리스 패턴/층이동/복구/루프 검증 (test_phase6.py, 26/26 통과). 실맵 확인은 게임에서 직접
 
 **완료 기준**: 캐릭터가 1층-2층을 자동으로 오가며 스킬을 사용함
 
@@ -598,8 +598,8 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 - [x] PHASE 2  — 라이선스 시스템
 - [x] PHASE 3  — HP/MP 포션
 - [x] PHASE 4  — 스킬 콤보
-- [ ] PHASE 5  — 미니맵 좌표
-- [ ] PHASE 6  — 패턴 방식 자동이동
+- [x] PHASE 5  — 미니맵 좌표
+- [x] PHASE 6  — 패턴 방식 자동이동
 - [ ] PHASE 7  — 상태 감시
 - [ ] PHASE 8  — 텔레그램 알림
 - [ ] PHASE 9  — 매매 루틴 [PREMIUM]

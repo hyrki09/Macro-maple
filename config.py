@@ -95,6 +95,29 @@ SKILL_DELAY_JITTER = 0.20
 # 기본 스킬 모드 — config.json 미설정 시 사용 (저스펙: 전 등급 안전)
 SKILL_MODE_DEFAULT = SKILL_MODE_LOWSPEC
 
+# ===== 이동/패턴 사냥 (PHASE 6) =====
+# 방향키 / 점프 키 바인딩 (게임 키 설정에 맞게 보정)
+MOVE_LEFT_KEY  = 'left'
+MOVE_RIGHT_KEY = 'right'
+UP_KEY         = 'up'     # 위 방향(사다리/포탈 진입)
+DOWN_KEY       = 'down'   # 아래 방향(아래 점프/내려가기)
+JUMP_KEY       = 'alt'    # 메이플 기본 점프
+
+# 좌우 이동 시 방향키를 누르고 있는 시간(초) 랜덤 범위 (코드 규칙 2)
+MOVE_HOLD_MIN = 0.5
+MOVE_HOLD_MAX = 1.2
+
+# 층 이동
+FLOOR_MOVE_ATTEMPTS  = 3     # 목표 층 도달까지 점프 시도 횟수
+FLOOR_MOVE_HOLD_MIN  = 0.3   # 층 이동 점프 hold 최소(초)
+FLOOR_MOVE_HOLD_MAX  = 0.6   # 층 이동 점프 hold 최대(초)
+FLOOR_MOVE_WAIT_MIN  = 0.4   # 점프 후 도착 확인 전 대기 최소(초)
+FLOOR_MOVE_WAIT_MAX  = 0.8   # 점프 후 도착 확인 전 대기 최대(초)
+
+# 패턴 사냥
+PATTERN_FLOORS    = [1, 2]   # 오가며 사냥할 층 목록
+SWEEPS_PER_FLOOR  = 4        # 한 층에서 좌우 스윕 횟수 후 다른 층으로 이동
+
 # ===== 상점 주기 (초) =====
 SHOP_INTERVAL = 1800   # 30분
 

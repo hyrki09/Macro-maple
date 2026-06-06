@@ -16,6 +16,7 @@ import time
 import config
 import macro_logic
 import screen_capture
+from hunting.pattern_hunter import PatternHunter
 from license.license_manager import license_manager
 
 try:
@@ -29,6 +30,24 @@ except Exception as e:
 logger = logging.getLogger(__name__)
 
 
+def create_hunter():
+    """설정 + 라이선스에 따라 사냥 방식을 결정해 인스턴스를 반환한다.
+
+    PHASE 6 에서는 패턴 방식(PatternHunter)만 제공한다.
+    PHASE 11 에서 YOLO 방식 분기를 추가한다:
+        mode == 'yolo' and license_manager.is_allowed('PREMIUM') → YoloHunter
+
+    Returns:
+        BaseHunter 구현 인스턴스.
+    """
+    try:
+        # TODO(PHASE 11): config.json 의 hunt_mode + PREMIUM 검사로 YoloHunter 분기
+        return PatternHunter()
+    except Exception as e:
+        logger.error(f"사냥 방식 생성 실패 — 패턴 방식으로 진행: {e}")
+        return PatternHunter()
+
+
 class MacroApp:
     """매크로 전체 상태와 메인 루프를 관리하는 클래스."""
 
@@ -36,6 +55,7 @@ class MacroApp:
         """앱 상태 초기화 — 실행 여부 플래그와 종료 이벤트 준비."""
         self.running = False              # 매크로 사냥 동작 중 여부 (F9 토글)
         self._stop_event = threading.Event()  # 프로그램 종료 신호 (F10)
+        self.hunter = create_hunter()     # PHASE 6: 사냥 방식 (현재 패턴 방식)
 
     def toggle(self) -> None:
         """F9 핸들러 — 매크로 시작/중지를 토글한다."""
@@ -105,11 +125,13 @@ class MacroApp:
         """메인 루프 1회전 동작.
 
         PHASE 3: 매 틱마다 HP/MP 를 확인해 임계값 이하면 포션을 사용한다.
-        이후 PHASE 에서 사냥 루프 / 상태 감시를 여기에 추가로 연결한다.
+        PHASE 6: 사냥 방식의 step() 을 1회 호출해 패턴 이동/스킬을 진행한다.
+        이후 PHASE 에서 상태 감시(monitor) 등을 여기에 추가로 연결한다.
         """
         try:
             macro_logic.check_and_use_potion()
-            # TODO(PHASE 6+): hunter.run_loop(), monitor 등 연결
+            self.hunter.step()
+            # TODO(PHASE 7+): monitor(정지/마을/감옥/거탐) 등 연결
         except Exception as e:
             logger.error(f"_tick 처리 실패: {e}")
 
