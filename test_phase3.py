@@ -17,6 +17,15 @@ import logging
 import sys
 import time
 
+# 콘솔 기본 인코딩(예: Windows cp949)이 유니코드 문자(≈, ± 등)를 출력하지 못해
+# UnicodeEncodeError 로 죽는 것을 막기 위해 stdout/stderr 을 UTF-8 로 재설정한다.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        # 일부 환경(reconfigure 미지원 스트림)에서는 무시
+        pass
+
 import numpy as np
 
 import config
