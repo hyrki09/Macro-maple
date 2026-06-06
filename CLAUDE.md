@@ -364,10 +364,10 @@ HP_COLOR_UPPER = np.array([10, 255, 255])
 ### PHASE 5 — 미니맵 좌표 인식
 > 목표: 미니맵에서 캐릭터 위치(X, Y)를 실시간으로 읽기
 
-- [ ] `assets/minimap/char_dot.png` 템플릿 이미지 준비
-- [ ] `screen_capture.py` — `get_character_position()` 함수
-- [ ] `config.py` — 미니맵 화면 좌표(x, y, w, h) 설정
-- [ ] 실행 테스트 — 이동할 때마다 좌표 출력 확인
+- [~] `assets/minimap/char_dot.png` 템플릿 이미지 준비 (폴더+README 준비, 실제 캡처는 게임에서 직접)
+- [x] `screen_capture.py` — `load_template()` / `find_template()` / `get_character_position()` 함수
+- [x] `config.py` — 미니맵 화면 좌표(MINIMAP_REGION) + 템플릿 경로/매칭 임계값 설정
+- [x] 실행 테스트 — 합성 미니맵으로 매칭/좌표/None 처리 검증 (test_phase5.py, 13/13 통과). 실게임 보정은 `--live` 모드
 
 **완료 기준**: 캐릭터 이동 시 미니맵 좌표가 실시간으로 변경됨
 

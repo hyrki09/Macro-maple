@@ -146,6 +146,158 @@ def get_mp_ratio(debug: bool = False) -> float | None:
     return get_bar_ratio(config.MP_BAR_REGION, config.MP_COLOR_RANGES, debug)
 
 
+# 템플릿 이미지 디스크 캐시 — 경로별로 한 번만 읽는다. None 은 '읽기 실패' 표시.
+_template_cache: dict = {}
+
+
+def load_template(path: str, use_cache: bool = True) -> np.ndarray | None:
+    """템플릿 이미지를 디스크에서 BGR 배열로 읽는다 (경로별 캐시).
+
+    Args:
+        path: 템플릿 이미지 파일 경로.
+        use_cache: True 면 같은 경로를 다시 읽지 않고 캐시를 쓴다.
+
+    Returns:
+        BGR 이미지 배열. 파일이 없거나 읽기 실패 시 None.
+    """
+    try:
+        if not _CV2_AVAILABLE:
+            logger.debug("[stub] load_template — opencv 없음")
+            return None
+        if use_cache and path in _template_cache:
+            return _template_cache[path]
+
+        if not os.path.exists(path):
+            logger.warning(
+                f"템플릿 이미지 없음: {path} — 실제 게임 미니맵에서 캐릭터 점을 "
+                f"잘라 이 경로에 저장하세요."
+            )
+            if use_cache:
+                _template_cache[path] = None
+            return None
+
+        img = cv2.imread(path, cv2.IMREAD_COLOR)
+        if img is None:
+            logger.error(f"템플릿 이미지 읽기 실패(손상?): {path}")
+            if use_cache:
+                _template_cache[path] = None
+            return None
+
+        if use_cache:
+            _template_cache[path] = img
+        return img
+    except Exception as e:
+        logger.error(f"템플릿 로드 실패({path}): {e}")
+        return None
+
+
+def find_template(image: np.ndarray, template: np.ndarray,
+                  threshold: float | None = None,
+                  debug: bool = False) -> dict | None:
+    """image 안에서 template 의 최적 매칭 위치를 찾는다 (TM_CCOEFF_NORMED).
+
+    Args:
+        image: 검색 대상 BGR 이미지.
+        template: 찾을 BGR 템플릿 이미지 (image 보다 작아야 한다).
+        threshold: 매칭 점수 하한(0~1). None 이면 config.TEMPLATE_MATCH_THRESHOLD.
+        debug: True 면 매칭 점수(max_val)를 로그로 출력.
+
+    Returns:
+        매칭 정보 딕셔너리. 점수가 threshold 미만이거나 실패 시 None.
+            {'score': float, 'top_left': (x, y),
+             'center': (cx, cy), 'size': (w, h)}
+        좌표는 모두 image 기준 픽셀 좌표.
+    """
+    try:
+        if not _CV2_AVAILABLE:
+            logger.debug("[stub] find_template — opencv 없음")
+            return None
+        if image is None or template is None:
+            logger.error("템플릿 매칭 실패 — 입력 이미지/템플릿이 None")
+            return None
+        if threshold is None:
+            threshold = config.TEMPLATE_MATCH_THRESHOLD
+
+        ih, iw = image.shape[:2]
+        th, tw = template.shape[:2]
+        if th > ih or tw > iw:
+            logger.error(
+                f"템플릿 매칭 실패 — 템플릿({tw}x{th})이 대상({iw}x{ih})보다 큼"
+            )
+            return None
+
+        res = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
+        _, max_val, _, max_loc = cv2.minMaxLoc(res)
+
+        if debug:
+            logger.info(f"템플릿 매칭 — max_val:{max_val:.3f} (임계값:{threshold})")
+
+        if max_val < threshold:
+            return None
+
+        top_left = (int(max_loc[0]), int(max_loc[1]))
+        center = (top_left[0] + tw // 2, top_left[1] + th // 2)
+        return {
+            'score': float(max_val),
+            'top_left': top_left,
+            'center': center,
+            'size': (tw, th),
+        }
+    except Exception as e:
+        logger.error(f"템플릿 매칭 실패: {e}")
+        return None
+
+
+def get_character_position(template: np.ndarray | None = None,
+                           region: dict | None = None,
+                           threshold: float | None = None,
+                           debug: bool = False) -> tuple[int, int] | None:
+    """미니맵에서 캐릭터 점을 찾아 미니맵 내 (x, y) 좌표를 반환한다.
+
+    미니맵 영역을 캡처하고 캐릭터 점 템플릿으로 매칭해, 매칭된 점의
+    중심을 미니맵 기준 좌표로 돌려준다. 캐릭터가 이동하면 이 좌표가
+    실시간으로 바뀐다. (PHASE 6 층 이동 판정 등에서 사용)
+
+    Args:
+        template: 캐릭터 점 BGR 템플릿. None 이면 config.MINIMAP_TEMPLATE_PATH 에서 로드.
+        region: 미니맵 캡처 영역 {'x','y','w','h'}. None 이면 config.MINIMAP_REGION.
+        threshold: 매칭 임계값(0~1). None 이면 config.MINIMAP_MATCH_THRESHOLD.
+        debug: True 면 매칭 점수를 로그로 출력.
+
+    Returns:
+        미니맵 좌상단(0,0) 기준 캐릭터 (x, y) 좌표. 못 찾으면 None.
+    """
+    try:
+        if region is None:
+            region = config.MINIMAP_REGION
+        if threshold is None:
+            threshold = config.MINIMAP_MATCH_THRESHOLD
+        if template is None:
+            template = load_template(config.MINIMAP_TEMPLATE_PATH)
+        if template is None:
+            # load_template 이 이미 안내 로그를 남겼다
+            return None
+
+        minimap = capture_region(region)
+        if minimap is None:
+            logger.error("캐릭터 위치 인식 실패 — 미니맵 캡처 없음")
+            return None
+
+        match = find_template(minimap, template, threshold=threshold, debug=debug)
+        if match is None:
+            if debug:
+                logger.info("캐릭터 점을 찾지 못함 (매칭 점수 부족)")
+            return None
+
+        pos = match['center']
+        if debug:
+            logger.info(f"캐릭터 위치 — x:{pos[0]} y:{pos[1]} (점수:{match['score']:.3f})")
+        return pos
+    except Exception as e:
+        logger.error(f"캐릭터 위치 인식 실패: {e}")
+        return None
+
+
 def save_debug_capture(filename: str | None = None) -> str | None:
     """현재 전체 화면을 캡처해 captures/ 폴더에 저장한다. (PHASE 1 동작 확인용)
 
