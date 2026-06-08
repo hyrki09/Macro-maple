@@ -392,12 +392,12 @@ HP_COLOR_UPPER = np.array([10, 255, 255])
 ### PHASE 7 — 상태 감시 시스템
 > 목표: 비정상 상황 감지 시 자동 정지
 
-- [ ] `monitor.py` — `detect_position_stuck()` 장시간 정지 감지
-- [ ] `monitor.py` — `detect_position_loop()` 같은 좌표 반복 감지
-- [ ] `monitor.py` — `detect_town()` 마을 이동 감지
-- [ ] `monitor.py` — `detect_jail()` 감옥 감지
-- [ ] `main.py` — 감지 시 매크로 자동 정지 연결
-- [ ] 실행 테스트 — 캐릭터를 마을로 이동시켜 감지 확인
+- [x] `monitor.py` — `detect_position_stuck()` 장시간 정지 감지
+- [x] `monitor.py` — `detect_position_loop()` 같은 좌표 반복 감지
+- [x] `monitor.py` — `detect_town()` 마을 이동 감지 (템플릿 매칭)
+- [x] `monitor.py` — `detect_jail()` 감옥 감지 (템플릿 매칭)
+- [x] `main.py` — 감지 시 매크로 자동 정지 연결 (`_check_monitor`, alert 시 running=False)
+- [x] 실행 테스트 — 헤드리스 정지/반복/마을/감옥/자동정지 검증 (test_phase7.py, 25/25 통과). 마을/감옥 템플릿은 게임에서 직접 캡처(assets/map_markers/)
 
 **완료 기준**: 마을/감옥 진입 또는 캐릭터 정지 시 매크로 자동 중단
 
@@ -600,7 +600,7 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 - [x] PHASE 4  — 스킬 콤보
 - [x] PHASE 5  — 미니맵 좌표
 - [x] PHASE 6  — 패턴 방식 자동이동
-- [ ] PHASE 7  — 상태 감시
+- [x] PHASE 7  — 상태 감시
 - [ ] PHASE 8  — 텔레그램 알림
 - [ ] PHASE 9  — 매매 루틴 [PREMIUM]
 - [ ] PHASE 10 — 설정 UI

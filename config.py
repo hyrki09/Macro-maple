@@ -118,6 +118,46 @@ FLOOR_MOVE_WAIT_MAX  = 0.8   # 점프 후 도착 확인 전 대기 최대(초)
 PATTERN_FLOORS    = [1, 2]   # 오가며 사냥할 층 목록
 SWEEPS_PER_FLOOR  = 4        # 한 층에서 좌우 스윕 횟수 후 다른 층으로 이동
 
+# ===== 상태 감시 (PHASE 7) =====
+# 매크로 동작 중 비정상 상황(정지/반복/마을/감옥)을 감지해 자동 정지한다.
+# 거탐(GM) 감지는 PHASE 12 에서 별도로 추가한다.
+
+# 감시 샘플링 주기(초) — 이 간격마다 위치/화면을 1회 확인한다.
+# 매 틱마다 확인하면 같은 스윕 도중 위치가 과하게 쌓여 반복 판정이 왜곡되므로
+# 간격을 둔다. (메인 루프 틱보다 길게)
+MONITOR_CHECK_INTERVAL = 1.0
+
+# --- 정지 감지 (detect_position_stuck) ---
+# 캐릭터 위치가 STUCK_POS_TOLERANCE(px) 이내로만 머문 채
+# STUCK_TIME_THRESHOLD(초) 가 지나면 '장시간 정지'로 판정한다.
+STUCK_POS_TOLERANCE  = 2
+STUCK_TIME_THRESHOLD = 30.0
+
+# --- 반복 좌표 감지 (detect_position_loop) ---
+# 최근 위치를 LOOP_POS_TOLERANCE(px) 격자로 양자화해 보관하고,
+# 가장 자주 나온 칸이 최근 LOOP_HISTORY_SIZE 개 중 LOOP_REPEAT_THRESHOLD 회
+# 이상이면 '같은 곳 반복(끼임)'으로 판정한다. 정상 좌우 스윕은 x 범위가
+# 넓어 한 칸이 임계 횟수만큼 차지하지 않는다.
+LOOP_POS_TOLERANCE    = 3
+LOOP_HISTORY_SIZE     = 20
+LOOP_REPEAT_THRESHOLD = 14
+
+# --- 마을/감옥 감지 (detect_town / detect_jail) ---
+# 마을/감옥 화면에만 나타나는 UI 요소를 템플릿 매칭으로 감지한다.
+# 템플릿은 반드시 실제 게임 화면에서 직접 캡처해 아래 경로에 저장한다.
+# 템플릿이 없으면 감지는 안전하게 False 를 반환한다(매크로를 막지 않음).
+TOWN_TEMPLATE_PATH = 'assets/map_markers/town.png'
+JAIL_TEMPLATE_PATH = 'assets/map_markers/jail.png'
+
+# 마을/감옥 판정 시 캡처할 화면 영역. 특정 UI 위치로 좁히면 오탐을 줄일 수
+# 있다. 기본은 전체 화면.
+TOWN_DETECT_REGION = FULL_SCREEN_REGION
+JAIL_DETECT_REGION = FULL_SCREEN_REGION
+
+# 마을/감옥 템플릿 매칭 임계값 (0~1)
+TOWN_MATCH_THRESHOLD = 0.80
+JAIL_MATCH_THRESHOLD = 0.80
+
 # ===== 상점 주기 (초) =====
 SHOP_INTERVAL = 1800   # 30분
 

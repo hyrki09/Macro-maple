@@ -15,6 +15,7 @@ import time
 
 import config
 import macro_logic
+import monitor
 import screen_capture
 from hunting.pattern_hunter import PatternHunter
 from license.license_manager import license_manager
@@ -56,6 +57,7 @@ class MacroApp:
         self.running = False              # 매크로 사냥 동작 중 여부 (F9 토글)
         self._stop_event = threading.Event()  # 프로그램 종료 신호 (F10)
         self.hunter = create_hunter()     # PHASE 6: 사냥 방식 (현재 패턴 방식)
+        self.monitor = monitor.state_monitor  # PHASE 7: 상태 감시 싱글톤
 
     def toggle(self) -> None:
         """F9 핸들러 — 매크로 시작/중지를 토글한다."""
@@ -63,6 +65,9 @@ class MacroApp:
             self.running = not self.running
             state = "시작" if self.running else "중지"
             logger.info(f"매크로 {state} (F9)")
+            # PHASE 7: 시작/재개 시 누적된 감시 상태(정지/반복 기록)를 초기화
+            if self.running:
+                self.monitor.reset()
         except Exception as e:
             logger.error(f"토글 처리 실패: {e}")
 
@@ -126,14 +131,31 @@ class MacroApp:
 
         PHASE 3: 매 틱마다 HP/MP 를 확인해 임계값 이하면 포션을 사용한다.
         PHASE 6: 사냥 방식의 step() 을 1회 호출해 패턴 이동/스킬을 진행한다.
-        이후 PHASE 에서 상태 감시(monitor) 등을 여기에 추가로 연결한다.
+        PHASE 7: 상태 감시로 정지/반복/마을/감옥을 확인해 비정상이면 자동 정지.
         """
         try:
             macro_logic.check_and_use_potion()
             self.hunter.step()
-            # TODO(PHASE 7+): monitor(정지/마을/감옥/거탐) 등 연결
+            self._check_monitor()
+            # TODO(PHASE 8): 자동 정지 시 텔레그램 알림 연결
+            # TODO(PHASE 12): 거탐(GM) 감지 연결
         except Exception as e:
             logger.error(f"_tick 처리 실패: {e}")
+
+    def _check_monitor(self) -> None:
+        """상태 감시를 1회 수행하고, 비정상 감지 시 매크로를 자동 정지한다.
+
+        주기(MONITOR_CHECK_INTERVAL) 가 안 됐으면 monitor 가 skipped 로
+        돌려주므로 추가 처리 없이 넘어간다.
+        """
+        try:
+            result = self.monitor.check()
+            if result.get('alert'):
+                reasons = ', '.join(result.get('reasons', []))
+                logger.warning(f"비정상 상태 감지({reasons}) — 매크로 자동 정지")
+                self.running = False
+        except Exception as e:
+            logger.error(f"상태 감시 처리 실패: {e}")
 
 
 def setup_logging() -> None:
