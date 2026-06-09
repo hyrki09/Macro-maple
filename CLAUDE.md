@@ -427,11 +427,11 @@ HP_COLOR_UPPER = np.array([10, 255, 255])
 ### PHASE 9 — 매매 루틴 [PREMIUM]
 > 목표: 주기마다 상점 이동 → 판매 → 소모품 구매 → 복귀
 
-- [ ] `shop_routine.py` — `go_to_shop()`, `sell_items()`, `buy_consumables()`, `return_to_hunting()`
-- [ ] `config.json` — 상점 주기, 소모품 구매 수량 설정
-- [ ] `main.py` — 타이머로 매매 루틴 주기 실행 연결
-- [ ] `@require_tier('PREMIUM')` 데코레이터 적용
-- [ ] 실행 테스트 — 수동으로 매매 루틴 트리거해서 전체 흐름 확인
+- [x] `shop_routine.py` — `go_to_shop()`, `sell_items()`, `buy_consumables()`, `return_to_hunting()` + `run_routine()` 오케스트레이터
+- [x] `config.json` — shop 블록(enabled/interval_sec/buy_quantity) 로드 (`load_shop_config`) + config.py 키 시퀀스
+- [x] `main.py` — 타이머(`ShopRoutineManager.is_due`) 로 주기 실행 연결 (`_check_shop`), 시작 시 타이머 리셋
+- [x] `@require_tier('PREMIUM')` 데코레이터 적용 — 4개 단계 모두, FREE/BASIC 은 denied 안전 처리
+- [x] 실행 테스트 — 헤드리스 설정로드/단계/구매수량/전체흐름/등급제한/타이머/main연동 검증 (test_phase9.py, 27/27 통과). 실제 키 흐름은 게임 키 배치 보정 후 확인
 
 **완료 기준**: 설정 주기마다 상점 이동 → 판매 → 구매 → 복귀 자동 실행
 
@@ -602,7 +602,7 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 - [x] PHASE 6  — 패턴 방식 자동이동
 - [x] PHASE 7  — 상태 감시
 - [x] PHASE 8  — 텔레그램 알림
-- [ ] PHASE 9  — 매매 루틴 [PREMIUM]
+- [x] PHASE 9  — 매매 루틴 [PREMIUM]
 - [ ] PHASE 10 — 설정 UI
 - [ ] PHASE 11 — YOLO 방식 사냥 [PREMIUM]
 - [ ] PHASE 12 — 거탐 감지 [PREMIUM]

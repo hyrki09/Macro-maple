@@ -17,6 +17,7 @@ import config
 import macro_logic
 import monitor
 import screen_capture
+import shop_routine
 import telegram_bot
 from hunting.pattern_hunter import PatternHunter
 from license.license_manager import license_manager
@@ -59,6 +60,7 @@ class MacroApp:
         self._stop_event = threading.Event()  # 프로그램 종료 신호 (F10)
         self.hunter = create_hunter()     # PHASE 6: 사냥 방식 (현재 패턴 방식)
         self.monitor = monitor.state_monitor  # PHASE 7: 상태 감시 싱글톤
+        self.shop = shop_routine.shop_manager  # PHASE 9: 매매 루틴 싱글톤 [PREMIUM]
 
     def toggle(self) -> None:
         """F9 핸들러 — 매크로 시작/중지를 토글한다."""
@@ -70,6 +72,8 @@ class MacroApp:
             # PHASE 8: 시작/중지 시 텔레그램 알림 (논블로킹)
             if self.running:
                 self.monitor.reset()
+                # PHASE 9: 매매 주기를 시작 시점 기준으로 다시 센다
+                self.shop.reset()
                 telegram_bot.notify_start()
             else:
                 telegram_bot.notify_stop()
@@ -141,10 +145,31 @@ class MacroApp:
         try:
             macro_logic.check_and_use_potion()
             self.hunter.step()
+            self._check_shop()
             self._check_monitor()
             # TODO(PHASE 12): 거탐(GM) 감지 연결
         except Exception as e:
             logger.error(f"_tick 처리 실패: {e}")
+
+    def _check_shop(self) -> None:
+        """매매 주기가 됐으면 매매 루틴을 1회 실행한다 (PHASE 9 [PREMIUM]).
+
+        PREMIUM 미만이면 조용히 넘어간다(전용 기능). 주기가 안 됐으면
+        shop.is_due() 가 False 를 돌려주므로 추가 처리 없이 통과한다.
+        루틴은 실행 성공/실패와 무관하게 타이머를 다시 세어 다음 주기를 잡는다.
+        """
+        try:
+            if not license_manager.is_allowed('PREMIUM'):
+                return
+            if not self.shop.is_due():
+                return
+            logger.info("매매 주기 도래 — 매매 루틴 실행")
+            result = self.shop.run_routine()
+            self.shop.mark_ran()
+            if result.get('ok') and not result.get('skipped'):
+                telegram_bot.notify_shop()
+        except Exception as e:
+            logger.error(f"매매 루틴 처리 실패: {e}")
 
     def _check_monitor(self) -> None:
         """상태 감시를 1회 수행하고, 비정상 감지 시 매크로를 자동 정지한다.
@@ -206,6 +231,9 @@ def main() -> None:
 
     # PHASE 8: config.json 의 텔레그램 설정 로드 (미설정이면 알림 비활성)
     telegram_bot.reload()
+
+    # PHASE 9: config.json 의 매매 설정 로드 (주기/구매수량/사용여부)
+    shop_routine.reload()
 
     app = MacroApp()
     if not app.register_hotkeys():

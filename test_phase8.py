@@ -271,6 +271,12 @@ def test_main_integration() -> None:
                         'jail': False, 'skipped': False}
         app.monitor = FakeMonitor()
 
+        # PHASE 9: toggle 이 shop.reset() 도 호출하므로 더미 shop 주입
+        class FakeShop:
+            def reset(self):
+                pass
+        app.shop = FakeShop()
+
         # 시작 토글 → start 알림
         app.toggle()
         check("시작 시 start 알림", app.running is True and 'start' in events)

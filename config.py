@@ -158,8 +158,40 @@ JAIL_DETECT_REGION = FULL_SCREEN_REGION
 TOWN_MATCH_THRESHOLD = 0.80
 JAIL_MATCH_THRESHOLD = 0.80
 
-# ===== 상점 주기 (초) =====
+# ===== 매매 루틴 (PHASE 9) [PREMIUM] =====
+# 상점 이동 → 판매 → 소모품 구매 → 복귀를 SHOP_INTERVAL 주기로 자동 실행한다.
+# 실제 게임의 NPC/메뉴 조작 키는 게임/설정마다 다르므로 키 시퀀스를 config 로
+# 빼서 사용자가 보정할 수 있게 한다. 모든 단계 사이 딜레이는 랜덤(코드 규칙 2).
+
+# 상점 주기(초) — 이 간격마다 매매 루틴 1회 실행
 SHOP_INTERVAL = 1800   # 30분
+
+# 각 단계 키 시퀀스 [(키, 입력 후 대기 기본딜레이(초)), ...]
+# 실제 게임 키 배치에 맞게 보정 필요 (값은 동작 예시)
+SHOP_GO_SEQUENCE       = [('=', 2.0), ('up', 1.0)]              # 상점 이동/NPC 진입
+SHOP_SELL_SEQUENCE     = [('s', 0.6), ('enter', 0.6), ('enter', 0.6)]  # 판매 탭→일괄판매 확정
+SHOP_BUY_OPEN_SEQUENCE = [('b', 0.6)]                           # 구매 탭 열기
+SHOP_RETURN_SEQUENCE   = [('esc', 0.6), ('=', 2.0)]            # 상점 닫고 사냥터 복귀
+
+# 구매 단계 — 구매 확정 키를 수량만큼 반복 입력
+SHOP_BUY_CONFIRM_KEY    = 'enter'   # 1회 구매 확정 키
+SHOP_BUY_ITEM_DELAY_MIN = 0.3       # 구매 1회 사이 최소 대기(초)
+SHOP_BUY_ITEM_DELAY_MAX = 0.6       # 구매 1회 사이 최대 대기(초)
+
+# 단계 마무리 후 다음 단계로 넘어가기 전 대기 랜덤 범위(초)
+SHOP_STEP_WAIT_MIN = 0.8
+SHOP_STEP_WAIT_MAX = 1.5
+
+# 키 시퀀스 기본딜레이에 적용할 랜덤 지터 비율 (±비율) — 고정 패턴 방지
+SHOP_DELAY_JITTER = 0.20
+
+# config.json 매매 블록 키와 기본값 (사용자 설정으로 덮어씀)
+SHOP_CONFIG_KEY = 'shop'
+SHOP_DEFAULTS = {
+    'enabled':      True,           # 매매 루틴 사용 여부
+    'interval_sec': SHOP_INTERVAL,  # 매매 주기(초)
+    'buy_quantity': 30,             # 소모품 구매 수량
+}
 
 # ===== OpenCV 매칭 임계값 =====
 TEMPLATE_MATCH_THRESHOLD = 0.80
@@ -193,6 +225,7 @@ TELEGRAM_DEFAULTS = {
 MSG_MACRO_START = '🟢 매크로를 시작했습니다.'
 MSG_MACRO_STOP  = '🔴 매크로를 중지했습니다.'
 MSG_MACRO_ALERT = '⚠️ 비정상 상태 감지({reasons}) — 매크로를 자동 정지했습니다.'
+MSG_SHOP_DONE   = '🛒 매매 루틴을 완료했습니다.'
 
 # ===== 로깅 설정 =====
 LOG_LEVEL  = 'INFO'

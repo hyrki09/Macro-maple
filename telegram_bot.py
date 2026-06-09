@@ -282,6 +282,11 @@ def notify_stop() -> None:
     notifier.send_message_async(config.MSG_MACRO_STOP)
 
 
+def notify_shop() -> None:
+    """매매 루틴 완료 알림을 백그라운드로 전송한다 (PHASE 9 연동)."""
+    notifier.send_message_async(config.MSG_SHOP_DONE)
+
+
 def notify_alert(reasons) -> None:
     """비정상 상태 알림 + 스크린샷을 백그라운드로 전송한다.
 
