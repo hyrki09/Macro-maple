@@ -169,6 +169,31 @@ YOLO_MODEL_PATH     = 'assets/yolo_models/maple_monster.pt'
 YOLO_CONFIDENCE     = 0.5
 YOLO_CAPTURE_REGION = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 
+# ===== 텔레그램 알림 (PHASE 8) =====
+# 시작/중지/이상상황 발생 시 텔레그램으로 알림과 스크린샷을 보낸다.
+# 토큰/채팅ID 같은 민감 정보는 코드(config.py)에 두지 않고 config.json 의
+# telegram 블록에서 로드한다. (config.json 은 .gitignore 로 커밋 제외)
+#
+# config.json 예시:
+#   { "telegram": { "enabled": true, "token": "<BotFather 토큰>",
+#                    "chat_id": "<getUpdates 로 확인한 chat_id>" } }
+TELEGRAM_API_BASE   = 'https://api.telegram.org'   # Bot API 기본 URL
+TELEGRAM_TIMEOUT    = 10.0                          # 전송 요청 타임아웃(초)
+TELEGRAM_CONFIG_KEY = 'telegram'                    # config.json 내 블록 키
+TELEGRAM_PARSE_MODE = 'HTML'                        # 메시지 파싱 모드
+
+# config.json 에 telegram 블록이 없을 때 쓰는 기본값 (알림 비활성)
+TELEGRAM_DEFAULTS = {
+    'enabled': False,
+    'token':   '',
+    'chat_id': '',
+}
+
+# 알림 메시지 템플릿 (코드 규칙 3: 문구도 한곳에서 관리)
+MSG_MACRO_START = '🟢 매크로를 시작했습니다.'
+MSG_MACRO_STOP  = '🔴 매크로를 중지했습니다.'
+MSG_MACRO_ALERT = '⚠️ 비정상 상태 감지({reasons}) — 매크로를 자동 정지했습니다.'
+
 # ===== 로깅 설정 =====
 LOG_LEVEL  = 'INFO'
 LOG_FORMAT = '%(asctime)s [%(levelname)s] %(name)s: %(message)s'

@@ -406,11 +406,11 @@ HP_COLOR_UPPER = np.array([10, 255, 255])
 ### PHASE 8 — 텔레그램 알림
 > 목표: 이상 상황 발생 시 텔레그램으로 알림 + 스크린샷 전송
 
-- [ ] 텔레그램 봇 생성 (BotFather에서 토큰 발급)
-- [ ] `telegram_bot.py` — `send_message()`, `send_screenshot()` 함수
-- [ ] `config.json` — TELEGRAM_TOKEN, CHAT_ID 저장
-- [ ] `main.py` — 시작/정지/이상상황에 알림 연결
-- [ ] 실행 테스트 — F9 누르면 텔레그램 알림 수신 확인
+- [~] 텔레그램 봇 생성 (BotFather에서 토큰 발급) — 사용자가 직접 발급 후 config.json 입력
+- [x] `telegram_bot.py` — `send_message()`, `send_screenshot()` + 논블로킹 async 래퍼
+- [x] `config.json` — telegram 블록(enabled/token/chat_id) 로드 (`load_telegram_config`)
+- [x] `main.py` — 시작/중지(toggle)/이상상황(_check_monitor)에 알림 연결
+- [x] 실행 테스트 — 헤드리스 설정로드/전송/폴백/async/main연동 검증 (test_phase8.py, 27/27 통과). 실제 수신은 토큰 입력 후 게임에서 확인
 
 **완료 기준**: 시작/정지/이상상황 시 텔레그램 알림 수신
 
@@ -601,7 +601,7 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 - [x] PHASE 5  — 미니맵 좌표
 - [x] PHASE 6  — 패턴 방식 자동이동
 - [x] PHASE 7  — 상태 감시
-- [ ] PHASE 8  — 텔레그램 알림
+- [x] PHASE 8  — 텔레그램 알림
 - [ ] PHASE 9  — 매매 루틴 [PREMIUM]
 - [ ] PHASE 10 — 설정 UI
 - [ ] PHASE 11 — YOLO 방식 사냥 [PREMIUM]

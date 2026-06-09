@@ -17,6 +17,7 @@ import config
 import macro_logic
 import monitor
 import screen_capture
+import telegram_bot
 from hunting.pattern_hunter import PatternHunter
 from license.license_manager import license_manager
 
@@ -66,8 +67,12 @@ class MacroApp:
             state = "시작" if self.running else "중지"
             logger.info(f"매크로 {state} (F9)")
             # PHASE 7: 시작/재개 시 누적된 감시 상태(정지/반복 기록)를 초기화
+            # PHASE 8: 시작/중지 시 텔레그램 알림 (논블로킹)
             if self.running:
                 self.monitor.reset()
+                telegram_bot.notify_start()
+            else:
+                telegram_bot.notify_stop()
         except Exception as e:
             logger.error(f"토글 처리 실패: {e}")
 
@@ -137,7 +142,6 @@ class MacroApp:
             macro_logic.check_and_use_potion()
             self.hunter.step()
             self._check_monitor()
-            # TODO(PHASE 8): 자동 정지 시 텔레그램 알림 연결
             # TODO(PHASE 12): 거탐(GM) 감지 연결
         except Exception as e:
             logger.error(f"_tick 처리 실패: {e}")
@@ -154,6 +158,8 @@ class MacroApp:
                 reasons = ', '.join(result.get('reasons', []))
                 logger.warning(f"비정상 상태 감지({reasons}) — 매크로 자동 정지")
                 self.running = False
+                # PHASE 8: 이상상황 알림 + 스크린샷 (논블로킹)
+                telegram_bot.notify_alert(result.get('reasons', []))
         except Exception as e:
             logger.error(f"상태 감시 처리 실패: {e}")
 
@@ -197,6 +203,9 @@ def main() -> None:
     logger.info("===== 메이플 자동사냥 매크로 시작 =====")
 
     verify_license()
+
+    # PHASE 8: config.json 의 텔레그램 설정 로드 (미설정이면 알림 비활성)
+    telegram_bot.reload()
 
     app = MacroApp()
     if not app.register_hotkeys():
