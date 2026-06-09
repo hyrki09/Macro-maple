@@ -193,6 +193,52 @@ SHOP_DEFAULTS = {
     'buy_quantity': 30,             # 소모품 구매 수량
 }
 
+# ===== 설정 UI / 사용자 설정 (PHASE 10) =====
+# settings_ui 가 읽고 쓰는 config.json 의 항목 식별자/기본값/등급 게이팅 기준.
+# 등급별 허용 범위(CLAUDE.md 기능표):
+#   - 사냥 방식: YOLO 는 PREMIUM 전용 (그 외 패턴)
+#   - 맵 선택:   FREE 는 1개 고정, BASIC/PREMIUM 은 전체
+#   - 모드 선택: 고스펙은 PREMIUM 전용 (그 외 저스펙)
+
+# 사냥 방식 식별자
+HUNT_MODE_PATTERN = 'pattern'        # 패턴 방식 — 전 등급
+HUNT_MODE_YOLO    = 'yolo'           # YOLO 방식 — PREMIUM 전용
+HUNT_MODE_DEFAULT = HUNT_MODE_PATTERN
+HUNT_MODE_LABELS  = {
+    HUNT_MODE_PATTERN: '패턴 방식',
+    HUNT_MODE_YOLO:    'YOLO 방식 (PREMIUM)',
+}
+
+# 맵 식별자 (대상 맵: 빨간 코끼리 2 / 빨간 코끼리 2 미니던전)
+MAP_RED_ELEPHANT2      = 'red_elephant_2'
+MAP_RED_ELEPHANT2_MINI = 'red_elephant_2_mini'
+MAP_DEFAULT            = MAP_RED_ELEPHANT2   # FREE 고정 맵
+MAP_LABELS = {
+    MAP_RED_ELEPHANT2:      '빨간 코끼리 2',
+    MAP_RED_ELEPHANT2_MINI: '빨간 코끼리 2 미니던전',
+}
+
+# 스킬 모드 라벨 (식별자는 위 SKILL_MODE_* 재사용)
+SKILL_MODE_LABELS = {
+    SKILL_MODE_LOWSPEC:  '저스펙',
+    SKILL_MODE_HIGHSPEC: '고스펙 (PREMIUM)',
+}
+
+# 펫먹이/텔레포트 주기(초) — 기본값 (해당 루틴은 이후 PHASE 에서 사용)
+PET_FEED_INTERVAL = 600    # 10분
+TELEPORT_INTERVAL = 300    # 5분
+
+# config.json 최상위 사용자 설정 키와 기본값
+# (telegram/shop 블록은 각 모듈의 *_DEFAULTS 를 재사용)
+USER_CONFIG_DEFAULTS = {
+    'license_key':       '',
+    'hunt_mode':         HUNT_MODE_DEFAULT,
+    'map':               MAP_DEFAULT,
+    'skill_mode':        SKILL_MODE_DEFAULT,
+    'pet_feed_interval': PET_FEED_INTERVAL,
+    'teleport_interval': TELEPORT_INTERVAL,
+}
+
 # ===== OpenCV 매칭 임계값 =====
 TEMPLATE_MATCH_THRESHOLD = 0.80
 

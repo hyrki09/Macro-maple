@@ -440,17 +440,20 @@ HP_COLOR_UPPER = np.array([10, 255, 255])
 ### PHASE 10 — 설정 UI (tkinter)
 > 목표: GUI로 설정값을 저장/불러오기
 
-- [ ] `settings_ui.py` — tkinter 설정 창 구현
-  - 라이선스 키 입력 및 등급 표시
-  - 사냥 방식 선택 (패턴 / YOLO) — PREMIUM만 YOLO 선택 가능
-  - 맵 선택 (빨코2 / 빨코2 미니던전) — PREMIUM만 전체 선택 가능
-  - 모드 선택 (고스펙 / 저스펙) — PREMIUM만 고스펙 선택 가능
-  - 소모품 구매 수량, 상점 주기, 펫먹이 주기, 텔레포트 주기
-  - 텔레그램 토큰 / 채팅ID 입력
-- [ ] `config.json` 읽기/쓰기 연결
-- [ ] 실행 테스트 — 설정 저장 후 재실행해도 값 유지 확인
+- [x] `settings_ui.py` — tkinter 설정 창 구현 (등급 게이팅/저장 로직은 순수 함수로 분리)
+  - [x] 라이선스 키 입력 및 등급 표시 (활성화 버튼 → license_manager.activate)
+  - [x] 사냥 방식 선택 (패턴 / YOLO) — YOLO 는 PREMIUM 전용
+  - [x] 맵 선택 (빨코2 / 빨코2 미니던전) — FREE 1개 고정, BASIC+ 전체
+  - [x] 모드 선택 (고스펙 / 저스펙) — 고스펙은 PREMIUM 전용
+  - [x] 소모품 구매 수량, 상점 주기, 펫먹이 주기, 텔레포트 주기
+  - [x] 텔레그램 토큰 / 채팅ID 입력 + 알림 사용 여부
+- [x] `config.json` 읽기/쓰기 연결 — `user_config.py` (load/save + 기본값 병합), 저장 시 등급 강등(enforce)
+- [x] 실행 테스트 — 라운드트립/병합/게이팅/강등/빌드 검증 (test_phase10.py, 46/46 통과) + Tk 위젯 빌드 스모크
 
 **완료 기준**: GUI로 설정 변경 → config.json 저장 → 재실행 시 불러와짐
+
+**참고**: 등급 게이팅 기준은 기능표를 따름 — 맵은 BASIC 부터 전체(FREE 만 1개 고정),
+YOLO·고스펙은 PREMIUM 전용. 하위 등급이 상위 선택을 저장해도 enforce 로 안전 강등됨.
 
 ---
 
@@ -603,6 +606,6 @@ YOLO_CAPTURE_REGION   = {'x': 0, 'y': 0, 'w': 1920, 'h': 1080}
 - [x] PHASE 7  — 상태 감시
 - [x] PHASE 8  — 텔레그램 알림
 - [x] PHASE 9  — 매매 루틴 [PREMIUM]
-- [ ] PHASE 10 — 설정 UI
+- [x] PHASE 10 — 설정 UI
 - [ ] PHASE 11 — YOLO 방식 사냥 [PREMIUM]
 - [ ] PHASE 12 — 거탐 감지 [PREMIUM]
